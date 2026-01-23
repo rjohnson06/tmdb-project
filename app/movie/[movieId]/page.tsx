@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { MovieDetails, Props } from '@/components/MovieDetails'
+import { MovieDetails, Props } from '@/components/movie-details/movie-details'
 
 type PageProps = {
     params: {

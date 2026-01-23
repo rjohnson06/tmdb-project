@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { tmdbClient } from '@/lib/tmdb/client'
+import { tmdbPosterUrl } from '@/lib/tmdb/images'
 import "server-only"
 
 type Period = "day" | "week"
@@ -13,6 +14,8 @@ export async function GET(
     { params }: { params: { period: string } }
 ) {
     const { period } = await params
+
+    console.log('api')
 
     if (!isPeriod(period)) {
         return NextResponse.json(
@@ -33,5 +36,18 @@ export async function GET(
         return NextResponse.json(error, { status: 502 })
     }
 
-    return NextResponse.json(data)
+    //console.log(data)
+
+    const resultWithImgUrls = {
+        ...data,
+        results: await Promise.all(data.results?.map(async (result) => ({
+            ...result,
+            poster_thumb: result.poster_path && await tmdbPosterUrl(result.poster_path),
+            poster_full: result.poster_path && await tmdbPosterUrl(result.poster_path)
+        })) ?? [])
+    }
+
+    console.log(resultWithImgUrls)
+
+    return NextResponse.json(resultWithImgUrls)
 }

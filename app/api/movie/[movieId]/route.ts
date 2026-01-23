@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { tmdbClient } from '@/lib/tmdb/client'
+import { tmdbPosterUrl } from '@/lib/tmdb/images'
 import "server-only"
 
 export async function GET(
@@ -22,5 +23,9 @@ export async function GET(
         return NextResponse.json(error, { status: 502 })
     }
 
-    return NextResponse.json(data)
+    return NextResponse.json({
+        ...data,
+        poster_thumb: data.poster_path && await tmdbPosterUrl(data.poster_path),
+        poster_full: data.poster_path && await tmdbPosterUrl(data.poster_path)
+    })
 }

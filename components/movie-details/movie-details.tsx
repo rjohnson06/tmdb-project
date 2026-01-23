@@ -1,8 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { apiGet } from "@/lib/tmdb/ourApiClient"
-import { MovieDetailsType } from "@/lib/tmdb/sharedTypes"
+import { movieDetails } from "@/lib/tmdb/ourApiClient"
 import { useQuery } from "@tanstack/react-query"
 
 export type Props = {
@@ -12,7 +10,7 @@ export type Props = {
 export function MovieDetails({ movieId }: Props) {
     const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
         queryKey: ["movieDetails", movieId],
-        queryFn: ({ signal }) => apiGet<MovieDetailsType>(`/api/movie/${movieId}`, signal),
+        queryFn: ({ signal }) => movieDetails(movieId, signal),
         enabled: Number.isFinite(movieId) && movieId > 0
     })
 
@@ -29,9 +27,13 @@ export function MovieDetails({ movieId }: Props) {
     }
 
     if (!data) return <div className="p4">No data.</div>
+    
+    console.log(data)
+    console.log(data.poster_full)
 
     return (
         <div className="rounded-2xl border p-4 shadow-sm">
+            {data.poster_full && <img className="w-25 h-25" src={data.poster_full} />}
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <h2 className="text-xl font-semibold">
