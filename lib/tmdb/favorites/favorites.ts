@@ -1,9 +1,6 @@
-"use client"
-
 import { useEffect, useState } from 'react'
 
 const key = "favorites"
-
 type Favorites = number[]
 
 export default function useFavorites() {

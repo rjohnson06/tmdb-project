@@ -5,7 +5,7 @@ type TmdbConfig = paths["/3/configuration"]["get"]["responses"]["200"]["content"
 
 let inFlight: Promise<TmdbConfig> | null = null
 
-// we don't re-use the tmdbClient because we want to take advantage of nextjs fetch caching see : revalidate:...
+// we don't re-use the tmdbClient typed because we want to take advantage of nextjs fetch caching
 export async function getTmdbConfig(): Promise<TmdbConfig> {
     if (inFlight) return inFlight
 

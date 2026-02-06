@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
+import Nav from "@/components/nav/nav";
+import { MovieClientProvider } from "@/lib/tmdb/MovieClientProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,11 +26,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
-       <ReactQueryProvider>{children}</ReactQueryProvider>
+        <div className="min-h-full bg-linear-to-b from-gray-50 to-[#a3a7aa]">
+          <div className="w-full flex items-center justify-center p-20">
+            <div className="grow max-w-250">
+              <Nav />
+              <div className="bg-white shadow-md">
+                <MovieClientProvider>
+                  <ReactQueryProvider>
+                    {children}
+                  </ReactQueryProvider>
+                </MovieClientProvider>
+              </div>
+            </div>
+          </div>
+       </div>
       </body>
     </html>
   );

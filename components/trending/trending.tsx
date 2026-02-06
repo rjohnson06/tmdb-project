@@ -1,38 +1,38 @@
 "use client"
 
-import { movieListDay } from "@/lib/tmdb/ourApiClient"
 import { useQuery } from "@tanstack/react-query"
 import { MovieList } from "../movie-list/movie-list"
 import useFavorites from "@/lib/tmdb/favorites/favorites"
+import { useMovieClient } from "@/lib/tmdb/MovieClientProvider"
 
 export function Trending() {
-     const { data, isLoading, isError, refetch, isFetching } = useQuery({
+    const movieClient = useMovieClient()
+
+    const { data, isLoading, isError, refetch, isFetching } = useQuery({
         queryKey: ["trendingMovies"],
-        queryFn: ({ signal }) => movieListDay(signal),
-        gcTime: 0,           // Garbage collection time (formerly cacheTime)
-        staleTime: 0,        // Data is immediately considered stale
-        refetchOnMount: true // Refetch every time component mounts
-     })
+        queryFn: ({ signal }) => movieClient.movieListDay(signal)
+    })
 
-     const [favorites, setFavorites, toggleFavorite] = useFavorites()
+    const [favorites, setFavorites, toggleFavorite] = useFavorites()
 
-     if (isLoading) return <div className="p4">Loading...</div>
+    let content
 
-     if (isError) {
-        return (
+    if (isLoading) {
+        content = <div className="p4">Loading...</div>
+    }
+    else if (isError) {
+        content = 
             <div className="pb-4">
                 <div className="text-red-600">
                     Error: failed to get the trending movies. Please try again later.
                 </div>
             </div>
-        )
-     }
-
-     if (!data) return <div className="p4">No trending movie data.</div>
-
-     return (
-        <div className="flex flex-col gap-4">
-            <h1 className="font-bold text-3xl">Trending Movies</h1>
+    }
+    else if (!data) {
+        content = <div className="p4">No trending movie data.</div>
+    }
+    else {
+        content = 
             <MovieList movies={data.results.map(movie => ({ 
                 id: movie.id,
                 title: movie.title,
@@ -41,6 +41,12 @@ export function Trending() {
                 favorite: favorites.includes(movie.id),
                 favoriteClicked: toggleFavorite 
             }))} />
+    }
+
+    return (
+        <div className="flex flex-col gap-6 py-8">
+            <h1 className="font-bold text-3xl">Trending Movies</h1>
+            {content}
         </div>
-     )
+    )
 }
